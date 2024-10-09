@@ -176,7 +176,11 @@ where = handles.uipanel_task;
 
 tasklist = UTILS.GET.TaskList();
 
-nObjPerRow = 2;
+if length(tasklist) > 1
+    nObjPerRow = 2;
+else
+    nObjPerRow = 1;
+end
 task_dispatcher = GUI.VIEW.ObjectDispatcher(ones(size(tasklist)), nObjPerRow);
 
 for i = 1 : length(tasklist)
