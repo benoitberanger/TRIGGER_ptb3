@@ -16,7 +16,7 @@ classdef Menu < PTB_OBJECT.VIDEO.Base
         n                   (1,1) double
         i                   (1,1) double = 1
         value               (1,1) string
-        is_valid            (1,1) logical = false
+        is_selected         (1,1) logical = false
         text_xy             (:,2) double
     end % props
 
@@ -60,7 +60,7 @@ classdef Menu < PTB_OBJECT.VIDEO.Base
                 self.i = 1;
             end
             self.value = self.items(self.i);
-            self.is_valid = false;
+            self.is_selected = false;
         end % fcn
 
         %------------------------------------------------------------------
@@ -70,12 +70,12 @@ classdef Menu < PTB_OBJECT.VIDEO.Base
                 self.i = self.n;
             end
             self.value = self.items(self.i);
-            self.is_valid = false;
+            self.is_selected = false;
         end % fcn
 
         %------------------------------------------------------------------
         function Validate( self )
-            self.is_valid = ~self.is_valid;
+            self.is_selected = ~self.is_selected;
         end % fcn
 
         %------------------------------------------------------------------
@@ -84,7 +84,7 @@ classdef Menu < PTB_OBJECT.VIDEO.Base
                 Screen('DrawText', self.window.ptr, char(self.items(idx)), self.text_xy(idx,1), self.text_xy(idx,2), self.text_color_base);
             end
 
-            if self.is_valid
+            if self.is_selected
                 color = self.text_color_selected;
             else
                 color = self.text_color_focus;
