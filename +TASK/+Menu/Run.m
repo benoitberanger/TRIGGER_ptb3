@@ -92,7 +92,13 @@ TextStim.size = 0.20;
 
 Menu          = PTB_OBJECT.VIDEO.Menu();
 Menu.window   = Window;
-Menu.SetItems(["A" "B" "C"])
+Menu.SetItems(["A" "BB" "CCC"])
+Menu.text_size_ratio = 0.20;
+Menu.text_font = 'Arial';
+Menu.text_color_base     = [100 100 100];
+Menu.text_color_focus    = [200 200 200];
+Menu.text_color_selected = [128 200 128];
+Menu.PrepareRendering()
 
 
 %% run the events
@@ -107,6 +113,10 @@ Window.Flip();
 S.STARTtime = PTB_ENGINE.START(S.cfgKeybinds.Start, S.cfgKeybinds.Abort);
 % S.recEvent.AddStart();
 % S.Window.AddFrameToMovie();
+
+Menu.Draw();
+Window.Flip();
+WaitSecs(S.cfgKeyOff);
 
 while 1
 
@@ -131,8 +141,8 @@ while 1
         end
 
         if flip
-            Menu
             flip = false;
+            Menu.Draw()
             flip_onset = Window.Flip();
             fprintf('%s \n', event)
             WaitSecs(S.cfgKeyOff);
