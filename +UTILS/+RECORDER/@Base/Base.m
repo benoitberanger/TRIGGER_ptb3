@@ -106,7 +106,7 @@ classdef (Abstract) Base < handle
 
         %------------------------------------------------------------------
         function ExportToTxt( self, filename, filetype, withHeader )
-            %EXPORTTOTXT print the self.Header and self.Data in a text file
+            %EXPORTTOTXT print the self.Header and self.data in a text file
             % withHeader=1 prints header (default), withHeader=0 does not.
 
             switch filetype
@@ -136,22 +136,22 @@ classdef (Abstract) Base < handle
             end
 
             % Print data
-            for i = 1 : size(self.Data,1)
-                for j = 1 : size(self.Data,2)
+            for i = 1 : size(self.data,1)
+                for j = 1 : size(self.data,2)
 
                     % Apply conversion if necessary
-                    switch class(self.Data)
+                    switch class(self.data)
 
                         case 'cell'
 
-                            if ischar(self.Data{i,j})
-                                toprint = self.Data{i,j};
+                            if ischar(self.data{i,j})
+                                toprint = self.data{i,j};
 
-                            elseif isnumeric(self.Data{i,j})
-                                toprint = num2str(self.Data{i,j});
+                            elseif isnumeric(self.data{i,j})
+                                toprint = num2str(self.data{i,j});
 
-                            elseif islogical(self.Data{i,j})
-                                switch self.Data{i,j}
+                            elseif islogical(self.data{i,j})
+                                switch self.data{i,j}
                                     case true
                                         toprint = 'TRUE';
                                     case false
@@ -163,11 +163,11 @@ classdef (Abstract) Base < handle
 
                         case 'double'
 
-                            if isnumeric(self.Data(i,j))
-                                toprint = num2str(self.Data(i,j));
+                            if isnumeric(self.data(i,j))
+                                toprint = num2str(self.data(i,j));
 
-                            elseif islogical(self.Data(i,j))
-                                switch self.Data(i,j)
+                            elseif islogical(self.data(i,j))
+                                switch self.data(i,j)
                                     case true
                                         toprint = 'TRUE';
                                     case false
@@ -183,7 +183,7 @@ classdef (Abstract) Base < handle
                     fprintf(fileID, '%s%s', toprint,sep);
 
                     % End of line
-                    if j == size(self.Data,2)
+                    if j == size(self.data,2)
                         fprintf(fileID, '\n');
                     end
 
@@ -201,7 +201,7 @@ classdef (Abstract) Base < handle
             %
             % Here, this method is a way to fetch :
             % 1) a column number      in slef.data . Syntax : columnNumber = obj.Get('regex'            )
-            % 2) an element contained in self.Data . Syntax : element      = obj.Get('regex', lineNumber)
+            % 2) an element contained in self.data . Syntax : element      = obj.Get('regex', lineNumber)
             %    lineNumber=integer ... => 1 element // lineNumber=vector => N elements // lineNumber=[] => all the column
             %
             % The 'regex' is a regular expression that will be found in obj.Header
@@ -220,24 +220,24 @@ classdef (Abstract) Base < handle
             assert( isnumeric(evt), 'evt, if is defined, mut be numeric' )
 
             if isempty(evt)
-                output = self.Data(:,column);
+                output = self.data(:,column);
                 return
             end
 
             if isscalar(evt)
-                switch class(self.Data)
+                switch class(self.data)
                     case 'cell'
-                        output = self.Data{evt,column};
+                        output = self.data{evt,column};
                     case 'double'
-                        output = self.Data(evt,column);
+                        output = self.data(evt,column);
                     otherwise
-                        output = self.Data{evt,column};
+                        output = self.data{evt,column};
                 end
                 return
             end
 
             if isvector(evt)
-                output = self.Data(evt,column);
+                output = self.data(evt,column);
                 return
             end
 

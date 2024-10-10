@@ -151,6 +151,16 @@ if S.WriteFiles
 end
 
 
+%% Save behaviour data, if exist
+
+if S.WriteFiles && isfield(S, 'recBehaviour')
+    S.recBehaviour.ExportToCSV(S.OutFilepath)
+    logger.log('saved CSV files : %s', [S.OutFilepath '.csv'])
+    S.recBehaviour.ExportToTSV(S.OutFilepath)
+    logger.log('saved TSV files : %s', [S.OutFilepath '.tsv'])
+end
+
+
 %% Save post-processing files
 
 if exist(fullfile('+TASK',['+' S.guiTask],'Generate_SPM_NamesOnsetsDurations_block.m'),'file')
