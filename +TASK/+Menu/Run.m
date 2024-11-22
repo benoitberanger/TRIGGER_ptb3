@@ -4,7 +4,7 @@ global S
 
 %% create other recorders
 
-S.recBehaviour = UTILS.RECORDER.Cell({'onset' 'event' 'selection' 'item' 'index'}, 1000);
+S.recBehaviour = UTILS.RECORDER.Cell({'onset' 'actor' 'event' 'operator_selection' 'operator_item' 'operator_index' 'participant_selection' 'participant_item' 'participant_index'}, 1000);
 
 
 %% set keybinds
@@ -111,7 +111,7 @@ fprintf('Keybinds config : \n')
 disp([keynames(:), keyvalues(:)])
 
 S.STARTtime = PTB_ENGINE.START(S.cfgKeybinds.Start, S.cfgKeybinds.Abort);
-S.recBehaviour.AddLine({0, 'START', MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i})
+S.recBehaviour.AddLine({0, '', 'START', MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
 
 MenuOperator.Draw();
 MenuParticipant.Draw();
@@ -127,17 +127,35 @@ while 1
 
 
         if     keyCode(S.cfgKeybinds.OperatorLeft )
-            flip = true;
+            flip  = true;
+            actor = 'Operator';
             event = 'Left';
             MenuOperator.Prev();
         elseif keyCode(S.cfgKeybinds.OperatorRight)
-            flip = true;
+            flip  = true;
+            actor = 'Operator';
             event = 'Right';
             MenuOperator.Next();
         elseif keyCode(S.cfgKeybinds.OperatorOk   )
-            flip = true;
+            flip  = true;
             event = 'Ok';
+            actor = 'Operator';
             MenuOperator.Validate();
+        elseif keyCode(S.cfgKeybinds.ParticipantLeft )
+            flip  = true;
+            actor = 'Participant';
+            event = 'Left';
+            MenuParticipant.Prev();
+        elseif keyCode(S.cfgKeybinds.ParticipantRight)
+            flip  = true;
+            actor = 'Participant';
+            event = 'Right';
+            MenuParticipant.Next();
+        elseif keyCode(S.cfgKeybinds.ParticipantOk   )
+            flip  = true;
+            actor = 'Participant';
+            event = 'Ok';
+            MenuParticipant.Validate();
         end
 
         if flip
@@ -147,14 +165,20 @@ while 1
             flip_onset = Window.Flip();
 
             if MenuOperator.is_selected
-                sel = 'SELECTED';
+                operator_select = 'SELECTED';
             else
-                sel = 'FOCUS';
+                operator_select = 'FOCUS';
             end
-            fprintf('% 8.3fs  %5s  -  %8s  %5s  %d  \n', ...
-                flip_onset-S.STARTtime, event, sel, char(MenuOperator.value), MenuOperator.i)
+            if MenuParticipant.is_selected
+                participant_select = 'SELECTED';
+            else
+                participant_select = 'FOCUS';
+            end
 
-            S.recBehaviour.AddLine({flip_onset-S.STARTtime, event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i})
+            fprintf('% 8.3fs - %11s %5s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
+                flip_onset-S.STARTtime, actor, event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
+
+            S.recBehaviour.AddLine({flip_onset-S.STARTtime, actor, event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
 
             WaitSecs(S.cfgKeyOff);
         end
@@ -164,7 +188,7 @@ while 1
 end % while
 
 S.ENDtime = GetSecs();
-S.recBehaviour.AddLine({S.ENDtime-S.STARTtime, 'END', MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i})
+S.recBehaviour.AddLine({S.ENDtime-S.STARTtime, '', 'END', MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
 
 PTB_ENGINE.END();
 
