@@ -2,6 +2,7 @@ classdef Menu < PTB_OBJECT.VIDEO.Base
 
     properties(GetAccess = public, SetAccess = public)
         % User accessible paramters :
+        text_side           (1,1) char
         text_size_ratio     (1,1) double
         text_font           (:,1) char
         text_color_base     (1,3) uint8
@@ -49,7 +50,13 @@ classdef Menu < PTB_OBJECT.VIDEO.Base
             for idx = 1 : length(self.items)
                 normBoundsRect = Screen('TextBounds', self.window.ptr, char(self.items(idx)));
                 [rw,rh] = RectSize(normBoundsRect);
-                self.text_xy(idx,:) = [self.window.center_x, cy(idx)] -  [rw,rh]/2;
+                switch upper(self.text_side)
+                    case 'L'
+                        LR_offset = self.window.size_x * 0.25;
+                    case 'R'
+                        LR_offset = self.window.size_x * 0.75;
+                end
+                self.text_xy(idx,:) = [LR_offset, cy(idx)] -  [rw,rh]/2;
             end
         end % fcn
 

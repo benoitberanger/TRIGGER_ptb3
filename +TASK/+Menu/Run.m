@@ -13,15 +13,19 @@ S.cfgKeybinds = TASK.cfgKeyboard(); % cross task keybinds
 
 S.cfgKeyOff   = 0.200; % seconds : time to wait after keypresse, to avoid "multiple presses"
 
+S.cfgKeybinds.OperatorLeft  = KbName('j');
+S.cfgKeybinds.OperatorOk    = KbName('k');
+S.cfgKeybinds.OperatorRight = KbName('l');
+
 switch S.guiKeybind
     case 'fORP (MRI)'
-        S.cfgKeybinds.Left  = KbName('b');
-        S.cfgKeybinds.Ok    = KbName('y');
-        S.cfgKeybinds.Right = KbName('g');
+        S.cfgKeybinds.ParticipantLeft  = KbName('b');
+        S.cfgKeybinds.ParticipantOk    = KbName('y');
+        S.cfgKeybinds.ParticipantRight = KbName('g');
     case 'Keyboard'
-        S.cfgKeybinds.Left  = KbName('LeftArrow');
-        S.cfgKeybinds.Ok    = KbName('DownArrow');
-        S.cfgKeybinds.Right = KbName('RightArrow');
+        S.cfgKeybinds.ParticipantLeft  = KbName('LeftArrow');
+        S.cfgKeybinds.ParticipantOk    = KbName('DownArrow');
+        S.cfgKeybinds.ParticipantRight = KbName('RightArrow');
     otherwise
         error('unknown S.guiKeybind : %s', S.guiKeybind)
 end
@@ -47,7 +51,7 @@ Window = PTB_ENGINE.VIDEO.Window();
 S.Window = Window; % also save it in the global structure for diagnostic
 
 % task specific paramters
-S.Window.bg_color       = [050 050 050];
+S.Window.bg_color       = [030 030 030];
 S.Window.movie_filepath = [S.OutFilepath '.mov'];
 
 % set parameters from the GUI
@@ -70,24 +74,27 @@ FixationCross.center_x = S.cfgFixationCross.Position(1);
 FixationCross.center_y = S.cfgFixationCross.Position(2);
 FixationCross.GenerateCoords();
 
-TextInstruction        = PTB_OBJECT.VIDEO.CenteredText();
-TextInstruction.window = Window;
-TextInstruction.color  = S.cfgFixationCross.Color;
-TextInstruction.size   = 0.10;
+MenuOperator                     = PTB_OBJECT.VIDEO.Menu();
+MenuOperator.window              = Window;
+MenuOperator.text_side           = 'L';
+MenuOperator.SetItems(["Repos" "Crise" "Inhibition" "Immitation" "Refractaire"])
+MenuOperator.text_size_ratio     = 0.10;
+MenuOperator.text_font           = 'Arial';
+MenuOperator.text_color_base     = [100 100 100];
+MenuOperator.text_color_focus    = [200 200 200];
+MenuOperator.text_color_selected = [100 255 100];
+MenuOperator.PrepareRendering()
 
-TextStim      = TextInstruction.CopyObject();
-TextStim.size = 0.20;
-
-
-Menu          = PTB_OBJECT.VIDEO.Menu();
-Menu.window   = Window;
-Menu.SetItems(["A" "BB" "CCC"])
-Menu.text_size_ratio = 0.20;
-Menu.text_font = 'Arial';
-Menu.text_color_base     = [100 100 100];
-Menu.text_color_focus    = [200 200 200];
-Menu.text_color_selected = [100 255 100];
-Menu.PrepareRendering()
+MenuParticipant                     = PTB_OBJECT.VIDEO.Menu();
+MenuParticipant.window              = Window;
+MenuParticipant.text_side           = 'R';
+MenuParticipant.SetItems(["Start" "Stop" "Rate" "Refractaire" "Sortie"])
+MenuParticipant.text_size_ratio     = MenuOperator.text_size_ratio;
+MenuParticipant.text_font           = MenuOperator.text_font;
+MenuParticipant.text_color_base     = MenuOperator.text_color_base;
+MenuParticipant.text_color_focus    = MenuOperator.text_color_focus;
+MenuParticipant.text_color_selected = MenuOperator.text_color_selected;
+MenuParticipant.PrepareRendering();
 
 
 %% run the events
@@ -97,10 +104,17 @@ flip = false;
 
 FixationCross.Draw();
 Window.Flip();
-S.STARTtime = PTB_ENGINE.START(S.cfgKeybinds.Start, S.cfgKeybinds.Abort);
-S.recBehaviour.AddLine({0, 'START', Menu.is_selected, char(Menu.value), Menu.i})
 
-Menu.Draw();
+keynames  = fieldnames(S.cfgKeybinds);
+keyvalues = KbName(struct2array(S.cfgKeybinds));
+fprintf('Keybinds config : \n')
+disp([keynames(:), keyvalues(:)])
+
+S.STARTtime = PTB_ENGINE.START(S.cfgKeybinds.Start, S.cfgKeybinds.Abort);
+S.recBehaviour.AddLine({0, 'START', MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i})
+
+MenuOperator.Draw();
+MenuParticipant.Draw();
 Window.Flip();
 WaitSecs(S.cfgKeyOff);
 
@@ -112,34 +126,35 @@ while 1
         if EXIT, break, end
 
 
-        if     keyCode(S.cfgKeybinds.Left )
+        if     keyCode(S.cfgKeybinds.OperatorLeft )
             flip = true;
             event = 'Left';
-            Menu.Prev();
-        elseif keyCode(S.cfgKeybinds.Right)
+            MenuOperator.Prev();
+        elseif keyCode(S.cfgKeybinds.OperatorRight)
             flip = true;
             event = 'Right';
-            Menu.Next();
-        elseif keyCode(S.cfgKeybinds.Ok   )
+            MenuOperator.Next();
+        elseif keyCode(S.cfgKeybinds.OperatorOk   )
             flip = true;
             event = 'Ok';
-            Menu.Validate();
+            MenuOperator.Validate();
         end
 
         if flip
             flip = false;
-            Menu.Draw()
+            MenuOperator.Draw()
+            MenuParticipant.Draw();
             flip_onset = Window.Flip();
 
-            if Menu.is_selected
+            if MenuOperator.is_selected
                 sel = 'SELECTED';
             else
                 sel = 'FOCUS';
             end
             fprintf('% 8.3fs  %5s  -  %8s  %5s  %d  \n', ...
-                flip_onset-S.STARTtime, event, sel, char(Menu.value), Menu.i)
+                flip_onset-S.STARTtime, event, sel, char(MenuOperator.value), MenuOperator.i)
 
-            S.recBehaviour.AddLine({flip_onset-S.STARTtime, event, Menu.is_selected, char(Menu.value), Menu.i})
+            S.recBehaviour.AddLine({flip_onset-S.STARTtime, event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i})
 
             WaitSecs(S.cfgKeyOff);
         end
@@ -148,10 +163,8 @@ while 1
 
 end % while
 
-
 S.ENDtime = GetSecs();
-S.recBehaviour.AddLine({S.ENDtime-S.STARTtime, 'END', Menu.is_selected, char(Menu.value), Menu.i})
-
+S.recBehaviour.AddLine({S.ENDtime-S.STARTtime, 'END', MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i})
 
 PTB_ENGINE.END();
 
