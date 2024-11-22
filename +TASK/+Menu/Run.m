@@ -111,7 +111,7 @@ fprintf('Keybinds config : \n')
 disp([keynames(:), keyvalues(:)])
 
 S.STARTtime = PTB_ENGINE.START(S.cfgKeybinds.Start, S.cfgKeybinds.Abort);
-S.recBehaviour.AddLine({0, '', 'START', MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
+S.recBehaviour.AddLine({0, 'Code', 'START', MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
 
 MenuOperator.Draw();
 MenuParticipant.Draw();
@@ -188,7 +188,7 @@ while 1
 end % while
 
 S.ENDtime = GetSecs();
-S.recBehaviour.AddLine({S.ENDtime-S.STARTtime, '', 'END', MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
+S.recBehaviour.AddLine({S.ENDtime-S.STARTtime, 'Code', 'END', MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
 
 PTB_ENGINE.END();
 
