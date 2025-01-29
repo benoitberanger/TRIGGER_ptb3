@@ -80,8 +80,9 @@ base_cfg_checkbox    = {'Units', 'Normalized', 'BackgroundColor',figureBGcolor, 
 %% Main pannels
 % To add a new "main" panel, its here.
 
-handles.uipanel_perma_cfg = uipanel(handles.(gui_name), base_cfg_panel{:}, 'Position',[0.00 0.50 1.00 0.50], 'Title','CFG' );
-handles.uipanel_task      = uipanel(handles.(gui_name), base_cfg_panel{:}, 'Position',[0.00 0.00 1.00 0.50], 'Title','TASK');
+handles.uipanel_perma_cfg = uipanel(handles.(gui_name), base_cfg_panel{:}, 'Position',[0.00 0.50 1.00 0.50], 'Title','CFG'  );
+handles.uipanel_param     = uipanel(handles.(gui_name), base_cfg_panel{:}, 'Position',[0.00 0.30 1.00 0.20], 'Title','PARAM');
+handles.uipanel_task      = uipanel(handles.(gui_name), base_cfg_panel{:}, 'Position',[0.00 0.00 1.00 0.30], 'Title','TASK' );
 
 
 %% Panel : permanent config
@@ -168,6 +169,13 @@ handles.pushbutton_eyelink_calibration   = uicontrol(where, base_cfg_pushbutton{
 % second line
 handles.pushbutton_eyelink_downloadfiles = uicontrol(where, base_cfg_pushbutton{:}, 'Position',[0.00 0.00 0.66 0.50], 'String','DownloadFiles', 'Callback', @GUI.VIEW.pushbutton_eyelink_downloadfiles_Callback);
 handles.pushbutton_eyelink_forcereset    = uicontrol(where, base_cfg_pushbutton{:}, 'Position',[0.66 0.00 0.33 0.50], 'String','ForceReset   ', 'Callback', @GUI.VIEW.pushbutton_eyelink_forcereset_Callback   );
+
+
+%% Panel param
+
+where = handles.uipanel_param;
+handles.text_restduration = uicontrol(where, base_cfg_text{:}, 'Position',[0.00 0.80 1.00 0.20], 'String','Rest duration (in minutes)');
+handles.edit_restduration = uicontrol(where, base_cfg_edit{:}, 'Position',[0.00 0.00 1.00 0.80], 'String','2.5');
 
 
 %% Panel : Task

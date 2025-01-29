@@ -33,17 +33,18 @@ S.TimeStampFile   = datestr(now, 'yyyymmddTHHMMSS'    ); % to sort automatically
 
 %% Lots of get*
 
-S.guiSubjectID   = GUI.GET.SubjectID  ( handles );
-S.guiACQmode     = GUI.GET.ACQmode    ( handles );
-S.guiSave        = GUI.GET.Save       ( handles );
-S.guiKeybind     = GUI.GET.Keybind    ( handles );
-S.guiParport     = GUI.GET.Parport    ( handles );
-S.guiScreenID    = GUI.GET.ScreenID   ( handles );
-S.guiWindowed    = GUI.GET.Windowed   ( handles );
-S.guiTransparent = GUI.GET.Transparent( handles );
-S.guiRecordMovie = GUI.GET.RecordMovie( handles );
-S.guiEyelink     = GUI.GET.Eyelink    ( handles );
-S.guiTask        = GUI.GET.Task       ( hObject );
+S.guiSubjectID   = GUI.GET.SubjectID   ( handles );
+S.guiACQmode     = GUI.GET.ACQmode     ( handles );
+S.guiSave        = GUI.GET.Save        ( handles );
+S.guiKeybind     = GUI.GET.Keybind     ( handles );
+S.guiParport     = GUI.GET.Parport     ( handles );
+S.guiScreenID    = GUI.GET.ScreenID    ( handles );
+S.guiWindowed    = GUI.GET.Windowed    ( handles );
+S.guiTransparent = GUI.GET.Transparent ( handles );
+S.guiRecordMovie = GUI.GET.RecordMovie ( handles );
+S.guiEyelink     = GUI.GET.Eyelink     ( handles );
+S.guiRestDuration= GUI.GET.RestDuration( handles );
+S.guiTask        = GUI.GET.Task        ( hObject );
 
 
 %% Some warnings, and other stuff
