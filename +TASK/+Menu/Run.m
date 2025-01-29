@@ -77,7 +77,7 @@ FixationCross.GenerateCoords();
 MenuOperator                     = PTB_OBJECT.VIDEO.Menu();
 MenuOperator.window              = Window;
 MenuOperator.text_side           = 'L';
-MenuOperator.SetItems(["Repos" "Crise" "Inhibition" "Immitation" "Refractaire"])
+MenuOperator.SetItems(["Repos" "Crise" "Inhibition" "Immitation"])
 MenuOperator.text_size_ratio     = 0.10;
 MenuOperator.text_font           = 'Arial';
 MenuOperator.text_color_base     = [100 100 100];
@@ -88,7 +88,7 @@ MenuOperator.PrepareRendering()
 MenuParticipant                     = PTB_OBJECT.VIDEO.Menu();
 MenuParticipant.window              = Window;
 MenuParticipant.text_side           = 'R';
-MenuParticipant.SetItems(["Start" "Stop" "Rate" "Refractaire" "Sortie"])
+MenuParticipant.SetItems(["Start" "Stop" "Rate" "Sortie"])
 MenuParticipant.text_size_ratio     = MenuOperator.text_size_ratio;
 MenuParticipant.text_font           = MenuOperator.text_font;
 MenuParticipant.text_color_base     = MenuOperator.text_color_base;
