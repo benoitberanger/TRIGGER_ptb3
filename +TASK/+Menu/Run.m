@@ -1,6 +1,13 @@
 function Run()
 global S
 
+RestDuration = S.guiRestDuration;
+switch S.guiACQmode
+    case 'Acquisition'
+    case {'Debug', 'FastDebug'}
+        RestDuration = 3;
+end
+
 
 %% create other recorders
 
@@ -121,9 +128,11 @@ MenuParticipant.Draw();
 Window.Flip();
 WaitSecs(S.cfgKeyOff);
 
+until_time = 0;
+
 while 1
 
-    [keyIsDown, ~, keyCode] = KbCheck();
+    [keyIsDown, secs, keyCode] = KbCheck();
     if keyIsDown
         EXIT = keyCode(S.cfgKeybinds.Abort);
         if EXIT, break, end
@@ -166,8 +175,16 @@ while 1
 
         if flip
             flip = false;
-            MenuOperator.Draw()
-            MenuParticipant.Draw();
+
+            if MenuOperator.value == "Repos" && MenuOperator.is_selected
+                FixationCross.Draw();
+                until_time = secs + RestDuration;
+            else
+                MenuOperator.Draw()
+                MenuParticipant.Draw();
+            end
+
+
             flip_onset = Window.Flip();
 
             if MenuOperator.is_selected
@@ -189,6 +206,13 @@ while 1
             WaitSecs(S.cfgKeyOff);
         end
 
+    end
+
+    if secs >= until_time
+        MenuOperator.Draw()
+        MenuOperator.RemoveSelect();
+        MenuParticipant.Draw();
+        flip_onset = Window.Flip();
     end
 
 end % while
