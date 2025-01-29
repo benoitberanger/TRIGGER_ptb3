@@ -130,6 +130,7 @@ WaitSecs(S.cfgKeyOff);
 
 until_time = 0;
 is_rest_condition = false;
+is_patient_working = false;
 
 while 1
 
@@ -183,15 +184,27 @@ while 1
                 MenuParticipant.RemoveSelect();
             end
 
+            if is_patient_working
+                is_patient_working = false;
+                MenuParticipant.RemoveSelect();
+                tmp_actor = 'Code';
+                tmp_event = 'WorkingFixationCrossOFF';
+                fprintf('% 8.3fs - %11s %25s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
+                    flip_onset-S.STARTtime, tmp_actor, tmp_event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
+                S.recBehaviour.AddLine({flip_onset-S.STARTtime, tmp_actor, tmp_event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
+            end
+
             if MenuOperator.value == "Repos" && MenuOperator.is_selected
                 FixationCross.Draw();
                 until_time = secs + RestDuration;
                 is_rest_condition = true;
+            elseif any(MenuOperator.value == ["Crise", "Inhibition", "Immitation"]) && MenuOperator.is_selected && MenuParticipant.value == "Start" && MenuParticipant.is_selected
+                FixationCross.Draw();
+                is_patient_working = true;
             else
                 MenuOperator.Draw()
                 MenuParticipant.Draw();
             end
-
 
             flip_onset = Window.Flip();
 
@@ -206,15 +219,20 @@ while 1
                 participant_select = 'FOCUS';
             end
 
-            fprintf('% 8.3fs - %11s %20s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
+            fprintf('% 8.3fs - %11s %25s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
                 flip_onset-S.STARTtime, actor, event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
 
             S.recBehaviour.AddLine({flip_onset-S.STARTtime, actor, event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
 
-            if is_rest_condition
+            if is_rest_condition || is_patient_working
                 actor = 'Code';
-                event = 'RestFixationCrossON';
-                fprintf('% 8.3fs - %11s %20s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
+                if is_rest_condition
+                    event = 'RestFixationCrossON';
+                elseif is_patient_working
+                    event = 'WorkingFixationCrossON';
+                end
+
+                fprintf('% 8.3fs - %11s %25s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
                     flip_onset-S.STARTtime, actor, event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
                 S.recBehaviour.AddLine({flip_onset-S.STARTtime, actor, event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
             end
@@ -233,7 +251,7 @@ while 1
         flip_onset = Window.Flip();
         actor = 'Code';
         event = 'RestFixationCrossOFF';
-        fprintf('% 8.3fs - %11s %20s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
+        fprintf('% 8.3fs - %11s %25s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
             flip_onset-S.STARTtime, actor, event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
         S.recBehaviour.AddLine({flip_onset-S.STARTtime, actor, event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
     end
