@@ -134,16 +134,19 @@ while 1
             actor = 'Operator';
             event = 'Prev';
             MenuOperator.Prev();
+            MenuParticipant.RemoveSelect();
         elseif keyCode(S.cfgKeybinds.OperatorNext)
             flip  = true;
             actor = 'Operator';
             event = 'Next';
             MenuOperator.Next();
+            MenuParticipant.RemoveSelect();
         elseif keyCode(S.cfgKeybinds.OperatorOk   )
             flip  = true;
             event = 'Ok';
             actor = 'Operator';
             MenuOperator.Validate();
+            MenuParticipant.RemoveSelect();
         elseif keyCode(S.cfgKeybinds.ParticipantPrev )
             flip  = true;
             actor = 'Participant';

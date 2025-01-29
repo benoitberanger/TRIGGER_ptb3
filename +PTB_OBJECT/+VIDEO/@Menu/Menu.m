@@ -84,6 +84,11 @@ classdef Menu < PTB_OBJECT.VIDEO.Base
         function Validate( self )
             self.is_selected = ~self.is_selected;
         end % fcn
+        
+        %------------------------------------------------------------------
+        function RemoveSelect( self )
+            self.is_selected = false;
+        end % fcn
 
         %------------------------------------------------------------------
         function Draw( self )
