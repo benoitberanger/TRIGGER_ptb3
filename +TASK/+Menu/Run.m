@@ -5,7 +5,7 @@ RestDuration = S.guiRestDuration;
 switch S.guiACQmode
     case 'Acquisition'
     case {'Debug', 'FastDebug'}
-        RestDuration = 3;
+        RestDuration = 2;
 end
 
 
@@ -129,6 +129,7 @@ Window.Flip();
 WaitSecs(S.cfgKeyOff);
 
 until_time = 0;
+is_rest_condition = false;
 
 while 1
 
@@ -176,9 +177,16 @@ while 1
         if flip
             flip = false;
 
+            if is_rest_condition
+                is_rest_condition = false;
+                MenuOperator.RemoveSelect();
+                MenuParticipant.RemoveSelect();
+            end
+
             if MenuOperator.value == "Repos" && MenuOperator.is_selected
                 FixationCross.Draw();
                 until_time = secs + RestDuration;
+                is_rest_condition = true;
             else
                 MenuOperator.Draw()
                 MenuParticipant.Draw();
@@ -198,21 +206,36 @@ while 1
                 participant_select = 'FOCUS';
             end
 
-            fprintf('% 8.3fs - %11s %5s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
+            fprintf('% 8.3fs - %11s %20s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
                 flip_onset-S.STARTtime, actor, event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
 
             S.recBehaviour.AddLine({flip_onset-S.STARTtime, actor, event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
+
+            if is_rest_condition
+                actor = 'Code';
+                event = 'RestFixationCrossON';
+                fprintf('% 8.3fs - %11s %20s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
+                    flip_onset-S.STARTtime, actor, event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
+                S.recBehaviour.AddLine({flip_onset-S.STARTtime, actor, event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
+            end
 
             WaitSecs(S.cfgKeyOff);
         end
 
     end
 
-    if secs >= until_time
-        MenuOperator.Draw()
+    if is_rest_condition && secs >= until_time
+        is_rest_condition = false;
+        operator_select = 'FOCUS';
         MenuOperator.RemoveSelect();
+        MenuOperator.Draw()
         MenuParticipant.Draw();
         flip_onset = Window.Flip();
+        actor = 'Code';
+        event = 'RestFixationCrossOFF';
+        fprintf('% 8.3fs - %11s %20s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
+            flip_onset-S.STARTtime, actor, event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
+        S.recBehaviour.AddLine({flip_onset-S.STARTtime, actor, event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
     end
 
 end % while
