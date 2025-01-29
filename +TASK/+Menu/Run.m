@@ -13,19 +13,19 @@ S.cfgKeybinds = TASK.cfgKeyboard(); % cross task keybinds
 
 S.cfgKeyOff   = 0.200; % seconds : time to wait after keypresse, to avoid "multiple presses"
 
-S.cfgKeybinds.OperatorLeft  = KbName('j');
-S.cfgKeybinds.OperatorOk    = KbName('k');
-S.cfgKeybinds.OperatorRight = KbName('l');
+S.cfgKeybinds.OperatorPrev = KbName('i');
+S.cfgKeybinds.OperatorNext = KbName('k');
+S.cfgKeybinds.OperatorOk   = KbName('l');
 
 switch S.guiKeybind
     case 'fORP (MRI)'
-        S.cfgKeybinds.ParticipantLeft  = KbName('b');
-        S.cfgKeybinds.ParticipantOk    = KbName('y');
-        S.cfgKeybinds.ParticipantRight = KbName('g');
+        S.cfgKeybinds.ParticipantPrev = KbName('b');
+        S.cfgKeybinds.ParticipantNext = KbName('y');
+        S.cfgKeybinds.Participantok   = KbName('g');
     case 'Keyboard'
-        S.cfgKeybinds.ParticipantLeft  = KbName('LeftArrow');
-        S.cfgKeybinds.ParticipantOk    = KbName('DownArrow');
-        S.cfgKeybinds.ParticipantRight = KbName('RightArrow');
+        S.cfgKeybinds.ParticipantPrev = KbName(   'UpArrow');
+        S.cfgKeybinds.ParticipantNext = KbName( 'DownArrow');
+        S.cfgKeybinds.ParticipantOk   = KbName('RightArrow');
     otherwise
         error('unknown S.guiKeybind : %s', S.guiKeybind)
 end
@@ -113,6 +113,9 @@ disp([keynames(:), keyvalues(:)])
 S.STARTtime = PTB_ENGINE.START(S.cfgKeybinds.Start, S.cfgKeybinds.Abort);
 S.recBehaviour.AddLine({0, 'Code', 'START', MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
 
+fprintf('Keybinds config : \n')
+disp([keynames(:), keyvalues(:)])
+
 MenuOperator.Draw();
 MenuParticipant.Draw();
 Window.Flip();
@@ -126,30 +129,30 @@ while 1
         if EXIT, break, end
 
 
-        if     keyCode(S.cfgKeybinds.OperatorLeft )
+        if     keyCode(S.cfgKeybinds.OperatorPrev )
             flip  = true;
             actor = 'Operator';
-            event = 'Left';
+            event = 'Prev';
             MenuOperator.Prev();
-        elseif keyCode(S.cfgKeybinds.OperatorRight)
+        elseif keyCode(S.cfgKeybinds.OperatorNext)
             flip  = true;
             actor = 'Operator';
-            event = 'Right';
+            event = 'Next';
             MenuOperator.Next();
         elseif keyCode(S.cfgKeybinds.OperatorOk   )
             flip  = true;
             event = 'Ok';
             actor = 'Operator';
             MenuOperator.Validate();
-        elseif keyCode(S.cfgKeybinds.ParticipantLeft )
+        elseif keyCode(S.cfgKeybinds.ParticipantPrev )
             flip  = true;
             actor = 'Participant';
-            event = 'Left';
+            event = 'Prev';
             MenuParticipant.Prev();
-        elseif keyCode(S.cfgKeybinds.ParticipantRight)
+        elseif keyCode(S.cfgKeybinds.ParticipantNext)
             flip  = true;
             actor = 'Participant';
-            event = 'Right';
+            event = 'Next';
             MenuParticipant.Next();
         elseif keyCode(S.cfgKeybinds.ParticipantOk   )
             flip  = true;
