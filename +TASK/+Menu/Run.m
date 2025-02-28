@@ -20,9 +20,9 @@ S.cfgKeybinds = TASK.cfgKeyboard(); % cross task keybinds
 
 S.cfgKeyOff   = 0.200; % seconds : time to wait after keypresse, to avoid "multiple presses"
 
-S.cfgKeybinds.OperatorPrev = KbName('i');
-S.cfgKeybinds.OperatorNext = KbName('k');
-S.cfgKeybinds.OperatorOk   = KbName('l');
+S.cfgKeybinds.OperatorPrev = KbName(   'UpArrow');
+S.cfgKeybinds.OperatorNext = KbName( 'DownArrow');
+S.cfgKeybinds.OperatorOk   = KbName('RightArrow');
 
 switch S.guiKeybind
     case 'fORP (MRI)'
@@ -30,9 +30,9 @@ switch S.guiKeybind
         S.cfgKeybinds.ParticipantNext = KbName('y');
         S.cfgKeybinds.Participantok   = KbName('g');
     case 'Keyboard'
-        S.cfgKeybinds.ParticipantPrev = KbName(   'UpArrow');
-        S.cfgKeybinds.ParticipantNext = KbName( 'DownArrow');
-        S.cfgKeybinds.ParticipantOk   = KbName('RightArrow');
+        S.cfgKeybinds.ParticipantPrev = KbName('i');
+        S.cfgKeybinds.ParticipantNext = KbName('k');
+        S.cfgKeybinds.ParticipantOk   = KbName('l');
     otherwise
         error('unknown S.guiKeybind : %s', S.guiKeybind)
 end
