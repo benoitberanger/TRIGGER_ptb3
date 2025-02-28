@@ -131,6 +131,7 @@ WaitSecs(S.cfgKeyOff);
 until_time = 0;
 is_rest_condition = false;
 is_patient_working = false;
+is_post_working = false;
 
 while 1
 
@@ -142,36 +143,36 @@ while 1
 
         if     keyCode(S.cfgKeybinds.OperatorPrev )
             flip  = true;
-            actor = 'Operator';
-            event = 'Prev';
+            actor = "Operator";
+            event = "Prev";
             MenuOperator.Prev();
             MenuParticipant.RemoveSelect();
         elseif keyCode(S.cfgKeybinds.OperatorNext)
             flip  = true;
-            actor = 'Operator';
-            event = 'Next';
+            actor = "Operator";
+            event = "Next";
             MenuOperator.Next();
             MenuParticipant.RemoveSelect();
         elseif keyCode(S.cfgKeybinds.OperatorOk   )
             flip  = true;
-            event = 'Ok';
-            actor = 'Operator';
+            event = "Ok";
+            actor = "Operator";
             MenuOperator.Validate();
             MenuParticipant.RemoveSelect();
         elseif keyCode(S.cfgKeybinds.ParticipantPrev )
             flip  = true;
             actor = 'Participant';
-            event = 'Prev';
+            event = "Prev";
             MenuParticipant.Prev();
         elseif keyCode(S.cfgKeybinds.ParticipantNext)
             flip  = true;
             actor = 'Participant';
-            event = 'Next';
+            event = "Next";
             MenuParticipant.Next();
         elseif keyCode(S.cfgKeybinds.ParticipantOk   )
             flip  = true;
             actor = 'Participant';
-            event = 'Ok';
+            event = "Ok";
             MenuParticipant.Validate();
         end
 
@@ -185,11 +186,16 @@ while 1
             end
 
             if is_patient_working
+                if actor == "Participant"
+                    is_post_working = true;
+                end
                 is_patient_working = false;
                 MenuParticipant.RemoveSelect();
+                MenuParticipant.JumpTo("Stop");
+                MenuParticipant.Forbid("Start");
                 tmp_actor = 'Code';
                 tmp_event = 'WorkingFixationCrossOFF';
-                fprintf('% 8.3fs - %11s %25s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
+                fprintf('% 8.3fs - %11s %25s  -  %8s  %14s  %d  -  %8s  %11s  %d  \n', ...
                     flip_onset-S.STARTtime, tmp_actor, tmp_event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
                 S.recBehaviour.AddLine({flip_onset-S.STARTtime, tmp_actor, tmp_event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
             end
@@ -201,12 +207,12 @@ while 1
             elseif any(MenuOperator.value == ["Crise", "Inhibition", "Immitation"]) && MenuOperator.is_selected && MenuParticipant.value == "Start" && MenuParticipant.is_selected
                 FixationCross.Draw();
                 is_patient_working = true;
+            elseif is_post_working
+                MenuParticipant.Draw();
             else
                 MenuOperator.Draw()
                 MenuParticipant.Draw();
             end
-
-            flip_onset = Window.Flip();
 
             if MenuOperator.is_selected
                 operator_select = 'SELECTED';
@@ -215,9 +221,16 @@ while 1
             end
             if MenuParticipant.is_selected
                 participant_select = 'SELECTED';
+                if is_post_working
+                    MenuParticipant.AllowAll();
+                    is_post_working = false;
+                    MenuOperator.Draw();
+                end
             else
                 participant_select = 'FOCUS';
             end
+
+            flip_onset = Window.Flip();
 
             fprintf('% 8.3fs - %11s %25s  -  %8s  %14s  %d  -  %8s  %11s  %d  \n', ...
                 flip_onset-S.STARTtime, actor, event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
@@ -232,7 +245,7 @@ while 1
                     event = 'WorkingFixationCrossON';
                 end
 
-                fprintf('% 8.3fs - %11s %25s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
+                fprintf('% 8.3fs - %11s %25s  -  %8s  %14s  %d  -  %8s  %11s  %d  \n', ...
                     flip_onset-S.STARTtime, actor, event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
                 S.recBehaviour.AddLine({flip_onset-S.STARTtime, actor, event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
             end
@@ -251,7 +264,7 @@ while 1
         flip_onset = Window.Flip();
         actor = 'Code';
         event = 'RestFixationCrossOFF';
-        fprintf('% 8.3fs - %11s %25s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
+        fprintf('% 8.3fs - %11s %25s  -  %8s  %14s  %d  -  %8s  %11s  %d  \n', ...
             flip_onset-S.STARTtime, actor, event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
         S.recBehaviour.AddLine({flip_onset-S.STARTtime, actor, event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
     end

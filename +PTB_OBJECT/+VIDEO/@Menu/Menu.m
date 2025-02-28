@@ -16,6 +16,7 @@ classdef Menu < PTB_OBJECT.VIDEO.Base
         items               (:,1) string
         n                   (1,1) double
         i                   (1,1) double = 1
+        forbidden           (1,1) double = 0
         value               (1,1) string
         is_selected         (1,1) logical = false
         text_xy             (:,2) double
@@ -63,8 +64,11 @@ classdef Menu < PTB_OBJECT.VIDEO.Base
         %------------------------------------------------------------------
         function Next( self )
             self.i = self.i + 1;
+            if self.i == self.forbidden
+                self.i = self.i + 1;
+            end
             if self.i > self.n
-                self.i = 1;
+                self.i = self.n;
             end
             self.value = self.items(self.i);
             self.is_selected = false;
@@ -73,6 +77,9 @@ classdef Menu < PTB_OBJECT.VIDEO.Base
         %------------------------------------------------------------------
         function Prev( self )
             self.i = self.i - 1;
+            if self.i == self.forbidden
+                self.i = self.i - 1;
+            end
             if self.i < 1
                 self.i = self.n;
             end
@@ -81,10 +88,28 @@ classdef Menu < PTB_OBJECT.VIDEO.Base
         end % fcn
 
         %------------------------------------------------------------------
+        function JumpTo( self, value )
+            idx = find(value == self.items);
+            self.i = idx;
+            self.value = self.items(self.i);
+            self.is_selected = false;
+        end % fcn
+
+        %------------------------------------------------------------------
+        function Forbid( self, value )
+            idx = find(value == self.items);
+            self.forbidden = idx;
+        end
+        %------------------------------------------------------------------
+        function AllowAll( self )
+            self.forbidden = 0;
+        end
+
+        %------------------------------------------------------------------
         function Validate( self )
             self.is_selected = ~self.is_selected;
         end % fcn
-        
+
         %------------------------------------------------------------------
         function RemoveSelect( self )
             self.is_selected = false;
