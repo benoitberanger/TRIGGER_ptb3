@@ -84,7 +84,7 @@ FixationCross.GenerateCoords();
 MenuOperator                     = PTB_OBJECT.VIDEO.Menu();
 MenuOperator.window              = Window;
 MenuOperator.text_side           = 'L';
-MenuOperator.SetItems(["Repos" "Crise" "Inhibition" "Immitation"])
+MenuOperator.SetItems(["Repos" "ReposPostCrise" "Crise" "Inhibition" "Immitation"])
 MenuOperator.text_size_ratio     = 0.10;
 MenuOperator.text_font           = 'Arial';
 MenuOperator.text_color_base     = [100 100 100];
@@ -194,7 +194,7 @@ while 1
                 S.recBehaviour.AddLine({flip_onset-S.STARTtime, tmp_actor, tmp_event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
             end
 
-            if MenuOperator.value == "Repos" && MenuOperator.is_selected
+            if (MenuOperator.value == "Repos" || MenuOperator.value == "ReposPostCrise") && MenuOperator.is_selected
                 FixationCross.Draw();
                 until_time = secs + RestDuration;
                 is_rest_condition = true;
@@ -219,7 +219,7 @@ while 1
                 participant_select = 'FOCUS';
             end
 
-            fprintf('% 8.3fs - %11s %25s  -  %8s  %11s  %d  -  %8s  %11s  %d  \n', ...
+            fprintf('% 8.3fs - %11s %25s  -  %8s  %14s  %d  -  %8s  %11s  %d  \n', ...
                 flip_onset-S.STARTtime, actor, event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
 
             S.recBehaviour.AddLine({flip_onset-S.STARTtime, actor, event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
