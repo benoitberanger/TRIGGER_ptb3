@@ -64,11 +64,11 @@ classdef Menu < PTB_OBJECT.VIDEO.Base
         %------------------------------------------------------------------
         function Next( self )
             self.i = self.i + 1;
+            if self.i > self.n
+                self.i = 1;
+            end
             if self.i == self.forbidden
                 self.i = self.i + 1;
-            end
-            if self.i > self.n
-                self.i = self.n;
             end
             self.value = self.items(self.i);
             self.is_selected = false;
@@ -77,10 +77,10 @@ classdef Menu < PTB_OBJECT.VIDEO.Base
         %------------------------------------------------------------------
         function Prev( self )
             self.i = self.i - 1;
-            if self.i == self.forbidden
-                self.i = self.i - 1;
-            end
             if self.i < 1
+                self.i = self.n;
+            end
+            if self.i == self.forbidden
                 self.i = self.n;
             end
             self.value = self.items(self.i);

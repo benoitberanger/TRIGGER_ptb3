@@ -4,6 +4,8 @@ global S
 RestDuration = S.guiRestDuration;
 switch S.guiACQmode
     case 'Acquisition'
+        minutes_to_seconds = 60;
+        RestDuration = RestDuration * minutes_to_seconds;
     case {'Debug', 'FastDebug'}
         RestDuration = 2;
 end
@@ -18,7 +20,7 @@ S.recBehaviour = UTILS.RECORDER.Cell({'onset' 'actor' 'event' 'operator_selectio
 
 S.cfgKeybinds = TASK.cfgKeyboard(); % cross task keybinds
 
-S.cfgKeyOff   = 0.200; % seconds : time to wait after keypresse, to avoid "multiple presses"
+S.cfgKeyOff   = 0.500; % seconds : time to wait after keypresse, to avoid "multiple presses"
 
 S.cfgKeybinds.OperatorPrev = KbName(   'UpArrow');
 S.cfgKeybinds.OperatorNext = KbName( 'DownArrow');
@@ -28,7 +30,7 @@ switch S.guiKeybind
     case 'fORP (MRI)'
         S.cfgKeybinds.ParticipantPrev = KbName('b');
         S.cfgKeybinds.ParticipantNext = KbName('y');
-        S.cfgKeybinds.Participantok   = KbName('g');
+        S.cfgKeybinds.ParticipantOk   = KbName('g');
     case 'Keyboard'
         S.cfgKeybinds.ParticipantPrev = KbName('i');
         S.cfgKeybinds.ParticipantNext = KbName('k');
@@ -199,6 +201,17 @@ while 1
                     flip_onset-S.STARTtime, tmp_actor, tmp_event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
                 S.recBehaviour.AddLine({flip_onset-S.STARTtime, tmp_actor, tmp_event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
             end
+
+            if actor == "Operator"
+                is_patient_working = false;
+                is_post_working = false;
+                MenuParticipant.AllowAll();
+            end
+
+            % if is_post_working && actor == "Operator"
+            %     is_post_working = false;
+            %     MenuParticipant.AllowAll();
+            % end
 
             if (MenuOperator.value == "Repos" || MenuOperator.value == "ReposPostCrise") && MenuOperator.is_selected
                 FixationCross.Draw();
