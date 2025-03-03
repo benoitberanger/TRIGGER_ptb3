@@ -174,8 +174,10 @@ handles.pushbutton_eyelink_forcereset    = uicontrol(where, base_cfg_pushbutton{
 %% Panel param
 
 where = handles.uipanel_param;
-handles.text_restduration = uicontrol(where, base_cfg_text{:}, 'Position',[0.00 0.80 1.00 0.20], 'String','Rest duration (in minutes)');
-handles.edit_restduration = uicontrol(where, base_cfg_edit{:}, 'Position',[0.00 0.00 1.00 0.80], 'String','2.5');
+handles.text_restduration = uicontrol(where, base_cfg_text{:}, 'Position',[0.00 0.80 0.50 0.20], 'String','Rest duration (in minutes)');
+handles.edit_restduration = uicontrol(where, base_cfg_edit{:}, 'Position',[0.00 0.00 0.50 0.80], 'String','2.5');
+handles.text_runlabel     = uicontrol(where, base_cfg_text{:}, 'Position',[0.50 0.80 0.50 0.20], 'String','Run label');
+handles.edit_runlabel     = uicontrol(where, base_cfg_edit{:}, 'Position',[0.50 0.00 0.50 0.80], 'String','');
 
 
 %% Panel : Task

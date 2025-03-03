@@ -45,6 +45,7 @@ S.guiRecordMovie = GUI.GET.RecordMovie ( handles );
 S.guiEyelink     = GUI.GET.Eyelink     ( handles );
 S.guiRestDuration= GUI.GET.RestDuration( handles );
 S.guiTask        = GUI.GET.Task        ( hObject );
+S.guiRunLabel    = GUI.GET.RunLabel    ( handles );
 
 
 %% Some warnings, and other stuff
@@ -66,9 +67,17 @@ end
 S.SubjectDataDir = UTILS.GET.SubjectDataDir(S.guiSubjectID);
 
 
+%% RunLabel
+
+if isempty(S.guiRunLabel)
+    logger.err('RunLabel is empty')
+    return
+end
+
+
 %% Generate base output filepath
 
-basename_norun = sprintf('%s__%s', S.guiSubjectID, S.guiTask );
+basename_norun = sprintf('%s__%s', S.guiSubjectID, S.guiRunLabel );
 [S.RunName, S.RunNumber] = UTILS.AppendRunNumber(S.SubjectDataDir, basename_norun);
 
 S.OutFilename    = sprintf('%s__%s', S.TimeStampFile, S.RunName);
