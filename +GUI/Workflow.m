@@ -95,6 +95,14 @@ if S.WriteFiles
 end
 
 
+%% Parallel port
+
+if S.guiParport
+    OpenParPort();
+    WriteParPort(0);
+end
+
+
 %% Eyelink
 
 if S.guiEyelink
@@ -105,10 +113,10 @@ if S.guiEyelink
     if ~EYELINK.IsConnected()                                                         , return, end % log message is inside the function
 
     % Generate the Eyelink filename
-    eyelink_max_finename = 8;                                                       % Eyelink filename must be 8 char maximum (Eyelink limitation)
-    available_char        = ['a':'z' 'A':'Z' '0':'9'];                              % This is all characters available (N=62)
-    name_num              = randi(length(available_char),[1 eyelink_max_finename]); % Pick 8 numbers, from 1 to N=62 (same char can be picked twice)
-    name_str              = available_char(name_num);                               % Convert the 8 numbers into char
+    eyelink_max_finename = 8;                                                      % Eyelink filename must be 8 char maximum (Eyelink limitation)
+    available_char       = ['a':'z' 'A':'Z' '0':'9'];                              % This is all characters available (N=62)
+    name_num             = randi(length(available_char),[1 eyelink_max_finename]); % Pick 8 numbers, from 1 to N=62 (same char can be picked twice)
+    name_str             = available_char(name_num);                               % Convert the 8 numbers into char
 
     S.EyelinkFile = name_str;
     logger.log('Eyelink file name = %s', S.EyelinkFile)

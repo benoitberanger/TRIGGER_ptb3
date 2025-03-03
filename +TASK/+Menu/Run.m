@@ -42,6 +42,20 @@ end
 S.recKeylogger = UTILS.RECORDER.Keylogger(S.cfgKeybinds);
 S.recKeylogger.Start();
 
+%% set Parallel port
+
+if S.guiParport
+    S.ParallelPort.duration = 0.003; % seconds
+    S.ParallelPort.messages.Menu           = 1;
+    S.ParallelPort.messages.Rest           = 2;
+    S.ParallelPort.messages.RestPostCrisis = 3;
+    S.ParallelPort.messages.Crisis         = 4;
+    S.ParallelPort.messages.Inhibition     = 5;
+    S.ParallelPort.messages.Immitation     = 6;
+    S.ParallelPort.messages.START          = 10;
+    S.ParallelPort.messages.END            = 11;
+end
+
 
 %% set parameters for rendering objects
 
@@ -130,6 +144,13 @@ MenuParticipant.Draw();
 Window.Flip();
 WaitSecs(S.cfgKeyOff);
 
+if S.guiParport
+    msg = S.ParallelPort.messages.START;
+    WriteParPort(msg);
+    WaitSecs(S.ParallelPort.duration);
+    WriteParPort(0);
+end
+
 until_time = 0;
 is_rest_condition = false;
 is_patient_working = false;
@@ -200,6 +221,12 @@ while 1
                 fprintf('% 8.3fs - %11s %25s  -  %8s  %14s  %d  -  %8s  %11s  %d  \n', ...
                     flip_onset-S.STARTtime, tmp_actor, tmp_event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
                 S.recBehaviour.AddLine({flip_onset-S.STARTtime, tmp_actor, tmp_event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
+                if S.guiParport
+                    msg = S.ParallelPort.messages.Menu;
+                    WriteParPort(msg);
+                    WaitSecs(S.ParallelPort.duration);
+                    WriteParPort(0);
+                end
             end
 
             if actor == "Operator"
@@ -208,18 +235,32 @@ while 1
                 MenuParticipant.AllowAll();
             end
 
-            % if is_post_working && actor == "Operator"
-            %     is_post_working = false;
-            %     MenuParticipant.AllowAll();
-            % end
-
             if (MenuOperator.value == "Repos" || MenuOperator.value == "ReposPostCrise") && MenuOperator.is_selected
                 FixationCross.Draw();
                 until_time = secs + RestDuration;
                 is_rest_condition = true;
+                if S.guiParport
+                    if     MenuOperator.value == "Repos"          , msg = S.ParallelPort.messages.Rest;
+                    elseif MenuOperator.value == "ReposPostCrise" , msg = S.ParallelPort.messages.RestPostCrisis;
+                    else, error('wrong parallel port message')
+                    end
+                    WriteParPort(msg);
+                    WaitSecs(S.ParallelPort.duration);
+                    WriteParPort(0);
+                end
             elseif any(MenuOperator.value == ["Crise", "Inhibition", "Immitation"]) && MenuOperator.is_selected && MenuParticipant.value == "Start" && MenuParticipant.is_selected
                 FixationCross.Draw();
                 is_patient_working = true;
+                if S.guiParport
+                    if     MenuOperator.value == "Crise"      , msg = S.ParallelPort.messages.Crisis;
+                    elseif MenuOperator.value == "Inhibition" , msg = S.ParallelPort.messages.Inhibition;
+                    elseif MenuOperator.value == "Immitation" , msg = S.ParallelPort.messages.Immitation;
+                    else, error('wrong parallel port message')
+                    end
+                    WriteParPort(msg);
+                    WaitSecs(S.ParallelPort.duration);
+                    WriteParPort(0);
+                end
             elseif is_post_working
                 MenuParticipant.Draw();
             else
@@ -232,6 +273,7 @@ while 1
             else
                 operator_select = 'FOCUS';
             end
+
             if MenuParticipant.is_selected
                 participant_select = 'SELECTED';
                 if is_post_working
@@ -264,9 +306,9 @@ while 1
             end
 
             WaitSecs(S.cfgKeyOff);
-        end
+        end % flip
 
-    end
+    end % keypress
 
     if is_rest_condition && secs >= until_time
         is_rest_condition = false;
@@ -280,9 +322,22 @@ while 1
         fprintf('% 8.3fs - %11s %25s  -  %8s  %14s  %d  -  %8s  %11s  %d  \n', ...
             flip_onset-S.STARTtime, actor, event, operator_select, char(MenuOperator.value), MenuOperator.i, participant_select, char(MenuParticipant.value), MenuParticipant.i)
         S.recBehaviour.AddLine({flip_onset-S.STARTtime, actor, event, MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
+        if S.guiParport
+            msg = S.ParallelPort.messages.Menu;
+            WriteParPort(msg);
+            WaitSecs(S.ParallelPort.duration);
+            WriteParPort(0);
+        end
     end
 
 end % while
+
+if S.guiParport
+    msg = S.ParallelPort.messages.END;
+    WriteParPort(msg);
+    WaitSecs(S.ParallelPort.duration);
+    WriteParPort(0);
+end
 
 S.ENDtime = GetSecs();
 S.recBehaviour.AddLine({S.ENDtime-S.STARTtime, 'Code', 'END', MenuOperator.is_selected, char(MenuOperator.value), MenuOperator.i, MenuParticipant.is_selected, char(MenuParticipant.value), MenuParticipant.i})
